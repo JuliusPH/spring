@@ -4,6 +4,7 @@ import com.exist.dto.AddressDto;
 import com.exist.dto.ContactDto;
 import com.exist.dto.PersonDto;
 import com.exist.dto.RoleDto;
+import com.exist.model.Contact;
 import com.exist.model.Name;
 import com.exist.model.enums.ContactType;
 import com.exist.model.enums.Gender;
@@ -11,11 +12,14 @@ import com.exist.model.enums.Sort;
 import com.exist.service.ContactService;
 import com.exist.service.PersonService;
 import com.exist.service.RoleService;
+import com.exist.validation.ContactValidator;
 import com.exist.validation.PersonValidator;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.context.annotation.Bean;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -396,5 +400,18 @@ public class PersonController extends MultiActionController{
         person.setRoles(roleSet);
 
         return person;
+    }
+
+    private boolean isValid(Object target, String objectName){
+        BindingResult result = new BeanPropertyBindingResult(target, objectName);
+        Validator validator = null;
+        if(target instanceof PersonDto){
+            validator = new PersonValidator();
+        }
+        else if(target instanceof Contact){
+            validator = new ContactValidator();
+        }
+        ValidationUtils.invokeValidator(validator, target, result);
+        return !result.hasErrors();
     }
 }
