@@ -14,8 +14,6 @@ import java.util.Date;
 import java.util.Set;
 
 public class PersonValidator implements Validator{
-    private ContactValidator contactValidator = new ContactValidator();
-
     @Override
 	public boolean supports(Class<?> classObject) {
 		return classObject == PersonDto.class;
