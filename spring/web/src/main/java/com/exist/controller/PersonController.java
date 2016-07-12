@@ -101,9 +101,7 @@ public class PersonController extends MultiActionController{
 
         PersonDto person = new PersonDto();
         person = mapPerson(person, request);
-        BindingResult result = new BeanPropertyBindingResult(person, "person");
-        ValidationUtils.invokeValidator(new PersonValidator(), person, result);
-        if(result.hasErrors()){
+        if(!isValid(person, "person")){
             return model;
         }
 
@@ -134,9 +132,7 @@ public class PersonController extends MultiActionController{
         model.addObject("message", "Failed to update, please try again");
 
         person = mapPerson(person, request);
-        BindingResult result = new BeanPropertyBindingResult(person, "person");
-        ValidationUtils.invokeValidator(new PersonValidator(), person, result);
-        if(result.hasErrors()){
+        if(!isValid(person, "person")){
             return model;
         }
 
@@ -223,6 +219,9 @@ public class PersonController extends MultiActionController{
                 emailContact.setValue(email);
                 toUpdateContacts.add(emailContact);
             }
+            if(!isValid(emailContact, "email")){
+                return model;
+            }
         }
 
         if(!mobileNumber.equals("")){
@@ -234,6 +233,9 @@ public class PersonController extends MultiActionController{
                 mobileContact.setValue(mobileNumber);
                 toUpdateContacts.add(mobileContact);
             }
+            if(!isValid(mobileContact, "mobile")){
+                return model;
+            }
         }
 
         if(!landlineNumber.equals("")){
@@ -244,6 +246,9 @@ public class PersonController extends MultiActionController{
             else{
                 landlineContact.setValue(landlineNumber);
                 toUpdateContacts.add(landlineContact);
+            }
+            if(!isValid(landlineContact, "landline")){
+                return model;
             }
         }
 
@@ -408,7 +413,7 @@ public class PersonController extends MultiActionController{
         if(target instanceof PersonDto){
             validator = new PersonValidator();
         }
-        else if(target instanceof Contact){
+        else if(target instanceof ContactDto){
             validator = new ContactValidator();
         }
         ValidationUtils.invokeValidator(validator, target, result);
