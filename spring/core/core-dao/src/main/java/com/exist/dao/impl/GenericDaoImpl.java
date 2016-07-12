@@ -19,9 +19,7 @@ import org.hibernate.Transaction;
 import org.hibernate.FetchMode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public abstract class GenericDaoImpl<E, K extends Serializable> implements GenericDao<E, K>{
     private SessionFactory sessionFactory;
     protected Class<? extends E> daoType;
