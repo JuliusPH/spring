@@ -42,8 +42,9 @@
     <commons-dbcp2.version>2.1.1</commons-dbcp2.version>
     <spring.version>4.3.1.RELEASE</spring.version>
     <aspectj.version>1.8.9</aspectj.version>
+    <junit.version>4.12</junit.version>
   </properties>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -170,6 +171,11 @@
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjweaver</artifactId>
         <version>${aspectj.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
