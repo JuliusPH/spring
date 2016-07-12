@@ -19,19 +19,25 @@ import org.hibernate.Transaction;
 import org.hibernate.FetchMode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public abstract class GenericDaoImpl<E, K extends Serializable> implements GenericDao<E, K>{
     private SessionFactory sessionFactory;
     protected Class<? extends E> daoType;
-    protected DaoCommandInvoker invoker = new DaoCommandInvoker();
+    protected DaoCommandInvoker daoCommandInvoker;
     
-    public GenericDaoImpl(SessionFactory sessionFactory){   
+    public GenericDaoImpl(SessionFactory sessionFactory){
         Type type = getClass().getGenericSuperclass();
         ParameterizedType parameterizedType = (ParameterizedType) type;
         daoType = (Class) parameterizedType.getActualTypeArguments()[0];
         this.sessionFactory = sessionFactory;
     }
-    
+
+    public void setDaoCommandInvoker(DaoCommandInvoker daoCommandInvoker){
+        this.daoCommandInvoker = daoCommandInvoker;
+    }
+
     protected Session getSession(){
         return sessionFactory.openSession();
     }
@@ -40,19 +46,19 @@ public abstract class GenericDaoImpl<E, K extends Serializable> implements Gener
     public boolean add(E entity){
         System.out.println("added");
         Session session = getSession();
-        return invoker.execute(new AddDaoCommand<E>(session, entity), session);
+        return daoCommandInvoker.execute(new AddDaoCommand<E>(session, entity), session);
     }
     
     @Override
     public boolean update(E entity){
         Session session = getSession();
-        return invoker.execute(new UpdateDaoCommand<E>(session, entity), session);
+        return daoCommandInvoker.execute(new UpdateDaoCommand<E>(session, entity), session);
     }
     
     @Override
     public boolean delete(E entity){
         Session session = getSession();
-        return invoker.execute(new DeleteDaoCommand<E>(session, entity), session);
+        return daoCommandInvoker.execute(new DeleteDaoCommand<E>(session, entity), session);
     }
     
     @Override
@@ -78,12 +84,12 @@ public abstract class GenericDaoImpl<E, K extends Serializable> implements Gener
     @Override
     public boolean deleteAll(Collection<E> entities){
         Session session = getSession();
-        return invoker.execute(new DeleteAllDaoCommand<E>(session, entities), session);
+        return daoCommandInvoker.execute(new DeleteAllDaoCommand<E>(session, entities), session);
     }
     
     @Override
     public boolean updateAll(Collection<E> entities){
         Session session = getSession();
-        return invoker.execute(new UpdateAllDaoCommand<E>(session, entities), session);
+        return daoCommandInvoker.execute(new UpdateAllDaoCommand<E>(session, entities), session);
     }
 }

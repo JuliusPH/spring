@@ -11,6 +11,9 @@
            http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <context:component-scan base-package="com.exist.dao.command"/>
+    <context:component-scan base-package="com.exist.dao.impl"/>
+    <context:component-scan base-package="com.exist.dao"/>
+    <context:component-scan base-package="com.exist.controller"/>
 
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.postgresql.Driver"/>
@@ -43,13 +46,10 @@
 
     <bean id="personDao" class="com.exist.dao.impl.PersonDaoImpl">
         <constructor-arg ref="sessionFactory"/>
+        <property name="daoCommandInvoker" ref="daoCommandInvoker" />
     </bean>
 
     <bean id="contactDao" class="com.exist.dao.impl.ContactDaoImpl">
-        <constructor-arg ref="sessionFactory"/>
-    </bean>
-
-    <bean id="addressDao" class="com.exist.dao.impl.AddressDaoImpl">
         <constructor-arg ref="sessionFactory"/>
     </bean>
 
@@ -65,15 +65,14 @@
         <constructor-arg ref="contactDao"/>
     </bean>
 
-    <bean id="addressService" class="com.exist.service.impl.AddressServiceImpl">
-        <constructor-arg ref="addressDao"/>
-    </bean>
-
     <bean id="roleService" class="com.exist.service.impl.RoleServiceImpl">
         <constructor-arg ref="roleDao"/>
     </bean>
 
-    <tx:annotation-driven/>
+    <bean id="daoCommandInvoker" class="com.exist.dao.command.DaoCommandInvoker"/>
+
+    <context:annotation-config/>
+    <tx:annotation-driven  transaction-manager="transactionManager"/>
     <bean id = "transactionManager" class = "org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name = "sessionFactory" ref = "sessionFactory" />
     </bean>
