@@ -75,14 +75,6 @@ public class PersonValidator implements Validator{
         return contacts.size() > 0;
     }
     
-    private boolean validateGender(Gender gender){
-        if(gender == null){
-            return false;
-        }
-        
-        return gender == Gender.Male || gender == Gender.Female;
-    }
-    
     private boolean validateRoles(Set<RoleDto> roles){
         return roles.size() > 0;
     }
