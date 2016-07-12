@@ -1,0 +1,106 @@
+package com.exist.controller;
+
+import com.exist.service.ContactService;
+import com.exist.service.PersonService;
+import com.exist.service.RoleService;
+import com.exist.service.impl.ContactServiceImpl;
+import com.exist.service.impl.PersonServiceImpl;
+import com.exist.service.impl.RoleServiceImpl;
+import com.exist.dto.AddressDto;
+import com.exist.dto.ContactDto;
+import com.exist.dto.PersonDto;
+import com.exist.dto.RoleDto;
+import com.exist.model.Name;
+import com.exist.model.enums.ContactType;
+import com.exist.model.enums.Gender;
+import com.exist.model.enums.Sort;
+import com.exist.result.Result;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.validator.GenericValidator;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+
+public class PersonController extends MultiActionController{
+	private PersonService personService;
+	private RoleService roleService;
+    
+    public void setPersonService(PersonService personService){
+        this.personService = personService;
+    }
+    
+    public void setRoleService(RoleService roleService){
+        this.roleService = roleService;
+    }
+
+	public ModelAndView list(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        String sort = request.getParameter("sort") != null ? request.getParameter("sort") : "id";
+        String order = request.getParameter("order") != null ? request.getParameter("order") : "ascending";
+        boolean isAscending = order.equals("ascending") || order.equals("") ? true : false;
+		List<PersonDto> persons = null;
+        switch(sort){
+            case "gwa":
+                persons = personService.getAllBy(Sort.GWA, isAscending);
+                break;
+            case "date hired":
+                persons = personService.getAllBy(Sort.DateHired, isAscending);
+                break;
+            case "last name":
+                persons = personService.getAllBy(Sort.LastName, isAscending);
+                break;
+            default:
+                persons = personService.getAllBy(Sort.ID, isAscending);
+                break;
+        }
+		ModelAndView model = new ModelAndView("index");
+		model.addObject("persons", persons);
+		return model;
+	}
+    
+    public ModelAndView loadPerson(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        String id = request.getParameter("id");
+        PersonDto person = getPerson(id);
+		ModelAndView model = new ModelAndView("person");
+        model.addObject("loadPerson", true);
+        if(person == null){
+            model.addObject("notFound", true);
+            return model;
+        }
+        model.addObject("person", person);
+		return model;
+    }
+    
+    public ModelAndView setupAdd(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        List<RoleDto> roles = roleService.getAll();
+		ModelAndView model = new ModelAndView("addperson");
+		model.addObject("roles", roles);
+		model.addObject("addPerson", true);
+		return model;
+    }
+    
+    public ModelAndView setupDelete(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        String id = request.getParameter("id");
+        PersonDto person = getPerson(id);
+		ModelAndView model = new ModelAndView("deleteperson");
+        model.addObject("loadPerson", true);
+        if(person == null){
+            model.addObject("notFound", true);
+            return model;
+        }
+        model.addObject("person", person);
+		return model;
+    }
+    
+    public PersonDto getPerson(String id){
+        if(id == null || "".equals(id) || !GenericValidator.isLong(id)){
+            return null;
+        }
+        return personService.get(Long.parseLong(id));
+    }
+
+    public PersonDto mapPerson(PersonDto person, HttpServletRequest request){
+        
+    }
+}
