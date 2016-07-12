@@ -34,7 +34,7 @@ public class PersonValidator implements Validator{
         }
         
         if(validateGwa(person.getGwa())){
-            errors.rejectValue("birthday", "birthday.invalid", "GWA is invalid");
+            errors.rejectValue("gwa", "gwa.invalid", "GWA is invalid");
         }
         
         if(validateDate(person.getDateHired())){
