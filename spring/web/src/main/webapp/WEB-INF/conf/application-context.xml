@@ -10,11 +10,6 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <context:component-scan base-package="com.exist.dao.command"/>
-    <context:component-scan base-package="com.exist.dao.impl"/>
-    <context:component-scan base-package="com.exist.dao"/>
-    <context:component-scan base-package="com.exist.controller"/>
-
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="org.postgresql.Driver"/>
         <property name="url" value="jdbc:postgresql://localhost/persondb"/>
@@ -70,10 +65,4 @@
     </bean>
 
     <bean id="daoCommandInvoker" class="com.exist.dao.command.DaoCommandInvoker"/>
-
-    <context:annotation-config/>
-    <tx:annotation-driven  transaction-manager="transactionManager"/>
-    <bean id = "transactionManager" class = "org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name = "sessionFactory" ref = "sessionFactory" />
-    </bean>
 </beans>
