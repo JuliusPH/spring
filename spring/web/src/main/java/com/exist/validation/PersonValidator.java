@@ -29,23 +29,23 @@ public class PersonValidator implements Validator{
 
         ValidationUtils.invokeValidator(new AddressValidator(), person.getAddress(), errors);
         
-        if(validateDate(person.getBirthday())){
+        if(!validateDate(person.getBirthday())){
             errors.rejectValue("birthday", "birthday.invalid", "Birthday is invalid");
         }
         
-        if(validateGwa(person.getGwa())){
+        if(!validateGwa(person.getGwa())){
             errors.rejectValue("gwa", "gwa.invalid", "GWA is invalid");
         }
         
-        if(validateDate(person.getDateHired())){
+        if(!validateDate(person.getDateHired())){
             errors.rejectValue("dateHired", "dateHired.invalid", "Date hired is invalid");
         }
         
-        if(validateContacts(person.getContacts(), errors)){
+        if(!validateContacts(person.getContacts(), errors)){
             errors.rejectValue("contacts", "contacts.invalid", "Contacts must have at least one");
         }
         
-        if(validateRoles(person.getRoles())){
+        if(!validateRoles(person.getRoles())){
             errors.rejectValue("roles", "roles.invalid", "Roles must have at least one");
         }
 	}
@@ -63,6 +63,7 @@ public class PersonValidator implements Validator{
     private boolean validateGwa(float gwa){
         float minGwa = 50f;
         float maxGwa = 100f;
+        System.out.println(GenericValidator.isInRange(gwa, minGwa, maxGwa));
         
         return GenericValidator.isInRange(gwa, minGwa, maxGwa);
     }
