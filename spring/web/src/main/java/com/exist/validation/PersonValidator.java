@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class PersonValidator implements Validator{
     private ContactValidator contactValidator = new ContactValidator();
-    
+
     @Override
 	public boolean supports(Class<?> classObject) {
 		return classObject == PersonDto.class;
@@ -37,7 +37,7 @@ public class PersonValidator implements Validator{
             errors.rejectValue("gwa", "gwa.invalid", "GWA is invalid");
         }
         
-        if(!validateDate(person.getDateHired())){
+        if(!validateDate(person.getDateHired()) && person.getDateHired() != null){
             errors.rejectValue("dateHired", "dateHired.invalid", "Date hired is invalid");
         }
         
