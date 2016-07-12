@@ -18,17 +18,17 @@ public class ContactValidator implements Validator{
         switch(contact.getContactType()){
             case Email:
                 if(!GenericValidator.isEmail(contact.getValue())){
-                    errors.rejectValue("contacts.contact", "email.invalid", "Email is invalid");
+                    errors.rejectValue("value", "email.invalid", "Email is invalid");
                 }
                 break;
             case Mobile:
                 if(!GenericValidator.matchRegexp(contact.getValue(), "^(09|\\+639)\\d{9}$")){
-                    errors.rejectValue("contacts.contact", "mobile.invalid", "Mobile is invalid");
+                    errors.rejectValue("value", "mobile.invalid", "Mobile is invalid");
                 }
                 break;
             case Landline:
                 if(!GenericValidator.matchRegexp(contact.getValue(), "^\\d{7}$")){
-                    errors.rejectValue("contacts.contact", "landline.invalid", "Landline is invalid");
+                    errors.rejectValue("value", "landline.invalid", "Landline is invalid");
                 }
                 break;
         }
