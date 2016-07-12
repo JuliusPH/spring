@@ -11,10 +11,11 @@ import com.exist.model.enums.Sort;
 import com.exist.service.ContactService;
 import com.exist.service.PersonService;
 import com.exist.service.RoleService;
-import com.sun.javafx.sg.prism.NGShape;
+import com.exist.validation.PersonValidator;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -97,6 +98,7 @@ public class PersonController extends MultiActionController{
         PersonDto person = new PersonDto();
         person = mapPerson(person, request);
         BindingResult result = new BeanPropertyBindingResult(person, "person");
+        ValidationUtils.invokeValidator(new PersonValidator(), person, result);
         if(result.hasErrors()){
             return model;
         }
@@ -129,6 +131,7 @@ public class PersonController extends MultiActionController{
 
         person = mapPerson(person, request);
         BindingResult result = new BeanPropertyBindingResult(person, "person");
+        ValidationUtils.invokeValidator(new PersonValidator(), person, result);
         if(result.hasErrors()){
             return model;
         }
