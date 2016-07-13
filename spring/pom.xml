@@ -43,6 +43,7 @@
     <spring.version>4.3.1.RELEASE</spring.version>
     <aspectj.version>1.8.9</aspectj.version>
     <junit.version>4.12</junit.version>
+    <javax.validation.version>1.1.0.Final</javax.validation.version>
   </properties>
 
   <dependencyManagement>
@@ -186,6 +187,11 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>${javax.validation.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
