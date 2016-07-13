@@ -7,8 +7,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
+@Repository
 public class PersonDaoImpl extends GenericDaoImpl<Person, Long> implements PersonDao{
     public PersonDaoImpl(SessionFactory sessionFactory){
         super(sessionFactory);
