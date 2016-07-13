@@ -12,8 +12,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class GenericServiceImpl<DTO, E, K> implements GenericService<DTO, E, K> {
     private GenericDao<E, K> genericDao;
     protected Class<? extends DTO> dtoType;
@@ -45,6 +47,7 @@ public class GenericServiceImpl<DTO, E, K> implements GenericService<DTO, E, K> 
     }
     
     @Override
+    @Transactional(readOnly = true)
     public DTO get(K key){
         if(genericDao.get(key) != null){
             return (DTO) mapper.map(genericDao.get(key), dtoType);
@@ -53,6 +56,7 @@ public class GenericServiceImpl<DTO, E, K> implements GenericService<DTO, E, K> 
     }
     
     @Override
+    @Transactional(readOnly = true)
     public List<DTO> getAll(){
         return (List<DTO>) genericDao.getAll().stream().map(e -> mapper.map(e, dtoType)).collect(Collectors.toList());
     }

@@ -7,8 +7,10 @@ import com.exist.model.Role;
 import com.exist.service.RoleService;
 import com.exist.service.impl.GenericServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class RoleServiceImpl extends GenericServiceImpl<RoleDto, Role, Long> implements RoleService{
     public RoleServiceImpl(RoleDao roleDao){
         super(roleDao);
