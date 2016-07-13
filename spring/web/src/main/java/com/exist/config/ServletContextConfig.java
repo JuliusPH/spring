@@ -13,12 +13,12 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @ComponentScan("com.exist.controller")
 public class ServletContextConfig extends WebMvcConfigurerAdapter{
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(ResourceHandlerRegistry registry){
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
     }
 
     @Bean(name = "viewResolver")
-    public InternalResourceViewResolver getViewResolver() {
+    public InternalResourceViewResolver getViewResolver(){
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/");
         viewResolver.setSuffix(".jsp");

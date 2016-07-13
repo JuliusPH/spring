@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan({"com.exist.dao", "com.exist.service"})
 public class ApplicationContextConfig{
     @Bean(name = "dataSource")
-    public BasicDataSource getDataSource() {
+    public BasicDataSource getDataSource(){
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://localhost/persondb");
@@ -32,7 +32,7 @@ public class ApplicationContextConfig{
 
     @Autowired
     @Bean(name = "sessionFactory")
-    public SessionFactory getSessionFactory(BasicDataSource dataSource) {
+    public SessionFactory getSessionFactory(BasicDataSource dataSource){
         LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(dataSource);
         sessionBuilder.addAnnotatedClasses(Person.class, Address.class, Contact.class, Role.class);
         sessionBuilder.setProperty("hibernate.show_sql", "true");
@@ -46,7 +46,7 @@ public class ApplicationContextConfig{
 
     @Autowired
     @Bean(name = "transactionManager")
-    public HibernateTransactionManager getTransactionManager(SessionFactory sessionFactory) {
+    public HibernateTransactionManager getTransactionManager(SessionFactory sessionFactory){
         HibernateTransactionManager transactionManager = new HibernateTransactionManager(sessionFactory);
         return transactionManager;
     }
