@@ -11,7 +11,9 @@ import java.util.stream.Collectors;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GenericServiceImpl<DTO, E, K> implements GenericService<DTO, E, K> {
     private GenericDao<E, K> genericDao;
     protected Class<? extends DTO> dtoType;

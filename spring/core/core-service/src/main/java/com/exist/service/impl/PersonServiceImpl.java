@@ -7,9 +7,12 @@ import com.exist.model.Person;
 import com.exist.model.enums.Sort;
 import com.exist.service.PersonService;
 import com.exist.service.impl.GenericServiceImpl;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class PersonServiceImpl extends GenericServiceImpl<PersonDto, Person, Long> implements PersonService{
     private PersonDao personDao;
     

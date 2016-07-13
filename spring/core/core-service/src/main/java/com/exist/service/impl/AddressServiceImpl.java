@@ -6,7 +6,9 @@ import com.exist.dto.AddressDto;
 import com.exist.model.Address;
 import com.exist.service.AddressService;
 import com.exist.service.impl.GenericServiceImpl;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AddressServiceImpl extends GenericServiceImpl<AddressDto, Address, Long> implements AddressService{
     public AddressServiceImpl(AddressDao addressDao){
         super(addressDao);
