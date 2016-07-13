@@ -15,16 +15,22 @@ import com.exist.service.RoleService;
 import com.exist.validation.ContactValidator;
 import com.exist.validation.PersonValidator;
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -32,28 +38,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PersonController extends MultiActionController{
+@Controller
+public class PersonController{
+    @Autowired
 	private PersonService personService;
+    @Autowired
     private ContactService contactService;
+    @Autowired
 	private RoleService roleService;
-    
-    public void setPersonService(PersonService personService){
-        this.personService = personService;
-    }
 
-    public void setContactService(ContactService contactService){
-        this.contactService = contactService;
-    }
-    
-    public void setRoleService(RoleService roleService){
-        this.roleService = roleService;
-    }
-
-	public ModelAndView list(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String sort = request.getParameter("sort") != null ? request.getParameter("sort") : "id";
-        String order = request.getParameter("order") != null ? request.getParameter("order") : "ascending";
+    @RequestMapping(value="/", method= RequestMethod.GET)
+	public ModelAndView list(@RequestParam(value = "sort", required = false) String sort,
+                             @RequestParam(value = "order", required = false) String order){
+        sort = sort != null ? sort : "id";
+        order = order != null ? order : "ascending";
         boolean isAscending = order.equals("ascending") || order.equals("") ? true : false;
-		List<PersonDto> persons = null;
+		List<PersonDto> persons;
         switch(sort){
             case "gwa":
                 persons = personService.getAllBy(Sort.GWA, isAscending);
@@ -72,112 +72,130 @@ public class PersonController extends MultiActionController{
 		model.addObject("persons", persons);
 		return model;
 	}
-    
-    public ModelAndView loadPerson(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String id = request.getParameter("id");
+
+    @RequestMapping(value="/person/{id}", method= RequestMethod.GET)
+    public ModelAndView loadPerson(@PathVariable String id){
         PersonDto person = getPerson(id);
 		ModelAndView model = new ModelAndView("person");
         model.addObject("loadPerson", true);
         if(person == null){
             model.addObject("notFound", true);
-            return model;
         }
-        model.addObject("person", person);
+        else{
+            model.addObject("person", person);
+        }
 		return model;
     }
-    
-    public ModelAndView setupAdd(HttpServletRequest request, HttpServletResponse response) throws Exception{
+
+    @RequestMapping(value="/add", method=RequestMethod.GET)
+    public ModelAndView setupAdd(){
+        ModelAndView model = new ModelAndView("addperson");
+        PersonDto person = new PersonDto();
         List<RoleDto> roles = roleService.getAll();
-		ModelAndView model = new ModelAndView("addperson");
+        model.addObject("person", person);
 		model.addObject("roles", roles);
 		model.addObject("addPerson", true);
 		return model;
     }
 
-    public ModelAndView processAdd(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    @RequestMapping(value="/add", method=RequestMethod.POST)
+    public ModelAndView processAdd(@Valid PersonDto person, BindingResult result){
         ModelAndView model = new ModelAndView("index");
         model.addObject("title", "Failed");
         model.addObject("message", "Failed to add person, please try again");
-
-        PersonDto person = new PersonDto();
-        person = mapPerson(person, request);
-        if(!isValid(person, "person")){
-            return model;
-        }
-
-        if(personService.add(person)){
-            model.addObject("title", "Success");
-            model.addObject("message", "Successfully added " + person.getFullName());
-        }
         model.addObject("persons", personService.getAllBy(Sort.ID, true));
+
+        if(result.hasErrors()){
+            model.addObject("errors", result.getAllErrors());
+        }
+        else{
+            if(personService.add(person)){
+                model.addObject("title", "Success");
+                model.addObject("message", "Successfully added " + person.getFullName());
+            }
+        }
         return model;
     }
 
-    public ModelAndView setupUpdate(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String id = request.getParameter("id");
-        PersonDto person = getPerson(id);
-        List<RoleDto> roles = roleService.getAll();
+    @RequestMapping(value="/update/{id}", method=RequestMethod.GET)
+    public ModelAndView setupUpdate(@PathVariable String id){
         ModelAndView model = new ModelAndView("updateperson");
-        model.addObject("person", person);
+        PersonDto person = getPerson(id);
+        if(person == null){
+            model.addObject("notFound", true);
+        }
+        else{
+            model.addObject("person", person);
+        }
+        List<RoleDto> roles = roleService.getAll();
         model.addObject("roles", roles);
         model.addObject("updatePerson", true);
         return model;
     }
 
-    public ModelAndView processUpdate(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String id = request.getParameter("id");
-        PersonDto person = getPerson(id);
+    @RequestMapping(value="/update", method=RequestMethod.POST)
+    public ModelAndView processUpdate(@Valid PersonDto person, BindingResult result){
         ModelAndView model = new ModelAndView("index");
         model.addObject("title", "Failed");
         model.addObject("message", "Failed to update, please try again");
-
-        person = mapPerson(person, request);
-        if(!isValid(person, "person")){
-            return model;
-        }
-
-        if(personService.update(person)){
-            model.addObject("title", "Success");
-            model.addObject("message", "Successfully updated " + person.getFullName());
-        }
         model.addObject("persons", personService.getAllBy(Sort.ID, true));
+
+        if(result.hasErrors()){
+            model.addObject("errors", result.getAllErrors());
+        }
+        else{
+            if(personService.update(person)){
+                model.addObject("title", "Success");
+                model.addObject("message", "Successfully updated " + person.getFullName());
+            }
+        }
         return model;
     }
 
-    public ModelAndView setupDelete(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String id = request.getParameter("id");
+    @RequestMapping(value="/delete/{id}", method=RequestMethod.GET)
+    public ModelAndView setupDelete(@PathVariable String id){
+        ModelAndView model = new ModelAndView("deleteperson");
         PersonDto person = getPerson(id);
-		ModelAndView model = new ModelAndView("deleteperson");
+        if(person == null){
+            model.addObject("notFound", true);
+        }
+        else{
+            model.addObject("person", person);
+        }
         model.addObject("deletePerson", true);
-        model.addObject("person", person);
 		return model;
     }
 
-    public ModelAndView processDelete(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String id = request.getParameter("id");
+    @RequestMapping(value="/delete/{id}", method=RequestMethod.POST)
+    public ModelAndView processDelete(@PathVariable String id){
         PersonDto person = getPerson(id);
         ModelAndView model = new ModelAndView("index");
         model.addObject("title", "Failed");
         model.addObject("message", "Failed to delete, please try again");
+        model.addObject("persons", personService.getAllBy(Sort.ID, true));
         if(personService.delete(person)){
             model.addObject("title", "Success");
             model.addObject("message", "Successfully deleted " + person.getFullName());
         }
-        model.addObject("persons", personService.getAllBy(Sort.ID, true));
         return model;
     }
 
-    public ModelAndView setupUpdateContacts(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String id = request.getParameter("id");
-        PersonDto person = getPerson(id);
+    @RequestMapping(value="/update_contacts/{id}", method=RequestMethod.GET)
+    public ModelAndView setupUpdateContacts(@PathVariable String id){
         ModelAndView model = new ModelAndView("contacts");
+        PersonDto person = getPerson(id);
+        if(person == null){
+            model.addObject("notFound", true);
+        }
+        else{
+            model.addObject("person", person);
+        }
         model.addObject("updateContacts", true);
-        model.addObject("person", person);
         return model;
     }
 
-    public ModelAndView processUpdateContacts(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String id = request.getParameter("id");
+    /*@RequestMapping(value="/update_contacts", method=RequestMethod.POST)
+    public ModelAndView processUpdateContacts(@Valid PersonDto person, BindingResult result){
         PersonDto person = getPerson(id);
         ModelAndView model = new ModelAndView("index");
         model.addObject("title", "Failed");
@@ -258,7 +276,7 @@ public class PersonController extends MultiActionController{
         }
         model.addObject("persons", personService.getAllBy(Sort.ID, true));
         return model;
-    }
+    }*/
     
     public PersonDto getPerson(String id){
         if(id == null || "".equals(id) || !GenericValidator.isLong(id)){

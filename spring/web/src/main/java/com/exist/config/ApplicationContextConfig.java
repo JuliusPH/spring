@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
-@ComponentScan({"com.exist.dao", "com.exist.service"})
+@ComponentScan({"com.exist.service", "com.exist.dao"})
 public class ApplicationContextConfig{
     @Bean(name = "dataSource")
     public BasicDataSource getDataSource(){

@@ -19,23 +19,21 @@ import org.hibernate.Transaction;
 import org.hibernate.FetchMode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public abstract class GenericDaoImpl<E, K extends Serializable> implements GenericDao<E, K>{
+    @Autowired
     private SessionFactory sessionFactory;
     protected Class<? extends E> daoType;
+    @Autowired
     protected DaoCommandInvoker daoCommandInvoker;
     
-    public GenericDaoImpl(SessionFactory sessionFactory){
+    public GenericDaoImpl(){
         Type type = getClass().getGenericSuperclass();
         ParameterizedType parameterizedType = (ParameterizedType) type;
         daoType = (Class) parameterizedType.getActualTypeArguments()[0];
-        this.sessionFactory = sessionFactory;
-    }
-
-    public void setDaoCommandInvoker(DaoCommandInvoker daoCommandInvoker){
-        this.daoCommandInvoker = daoCommandInvoker;
     }
 
     protected Session getSession(){

@@ -73,8 +73,8 @@
                 ;
                 
                 $(document).on("click", ".name-link", function(e){
-                    var personId = $(this).data("id");
-                    $.get("", {action : "loadPerson", id : personId}, function(data){
+                    var id = $(this).data("id");
+                    $.get("person/" + id, function(data){
                         $(".person.modal").html($(data).html());
                         $(".person.modal").modal("show");
                     });

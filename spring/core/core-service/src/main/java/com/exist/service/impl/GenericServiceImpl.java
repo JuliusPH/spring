@@ -22,12 +22,15 @@ public class GenericServiceImpl<DTO, E, K> implements GenericService<DTO, E, K> 
     protected Class<? extends E> daoType;
     protected ModelMapper mapper = new ModelMapper();
  
-    public GenericServiceImpl(GenericDao<E, K> genericDao){
-        this.genericDao = genericDao;
+    public GenericServiceImpl(){
         Type type = getClass().getGenericSuperclass();
         ParameterizedType parameterizedType = (ParameterizedType) type;
         dtoType = (Class) parameterizedType.getActualTypeArguments()[0];
         daoType = (Class) parameterizedType.getActualTypeArguments()[1];
+    }
+
+    public void setDao(GenericDao<E, K> genericDao){
+        this.genericDao = genericDao;
     }
     
     @Override

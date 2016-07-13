@@ -5,7 +5,6 @@ import com.exist.model.Person;
 import com.exist.model.enums.Sort;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
 
@@ -13,9 +12,7 @@ import java.util.List;
 
 @Repository
 public class PersonDaoImpl extends GenericDaoImpl<Person, Long> implements PersonDao{
-    public PersonDaoImpl(SessionFactory sessionFactory){
-        super(sessionFactory);
-    }
+    public PersonDaoImpl(){}
     
     @Override
     public List<Person> getAllBy(Sort sort, boolean isAscending){
