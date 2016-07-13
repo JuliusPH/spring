@@ -16,7 +16,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.exist.configuration.ApplicationContextConfig</param-value>
+        <param-value>com.exist.config.ApplicationContextConfig</param-value>
     </context-param>
 
     <servlet>
@@ -30,7 +30,7 @@
         </init-param>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>com.exist.configuration.ServletContextConfig</param-value>
+            <param-value>com.exist.config.ServletContextConfig</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
